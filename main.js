@@ -67,11 +67,17 @@ const torus = new THREE.Mesh(
 torus.position.z -= 2;
 scene.add(torus);
 
+
+var mixer;
+
 //ADD GLTF
 const loader = new GLTFLoader();
 const url = "./assets/dog.glb"
 loader.load(url, function(gltf){
   const ghost =gltf.scene;
+  mixer = new THREE.AnimationMixer(ghost)
+  var action = mixer.clipAction(gltf.animations[3])
+  action.play();
   scene.add(ghost)
 })
 
@@ -84,6 +90,9 @@ scene.add(target);
 light.target = target;
 scene.add(light);
 
+//Clock
+const clock  = new THREE.Clock();
+
 // background
 scene.background = new THREE.Color(0xffb6c1);
 
@@ -92,6 +101,9 @@ export function animate() {
 
   cube.rotation.y += 0.001;
   torus.rotation.y += 0.001;
+
+  const delta = clock.getDelta();
+  mixer.update(delta)
 
   renderer.render(scene, camera);
 }
